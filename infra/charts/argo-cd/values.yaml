@@ -358,7 +358,7 @@ controller:
 ## Dex
 dex:
   # -- Enable dex
-  enabled: true
+  enabled: false
   # -- Dex name
   name: dex-server
 
@@ -566,7 +566,7 @@ dex:
 ## Redis
 redis:
   # -- Enable redis
-  enabled: true
+  enabled: false
   # -- Redis name
   name: redis
 
@@ -755,7 +755,7 @@ redis-ha:
   enabled: false
   exporter:
     # -- If `true`, the prometheus exporter sidecar is enabled
-    enabled: true
+    enabled: false
   persistentVolume:
     # -- Configures persistency on Redis nodes
     enabled: false
@@ -769,10 +769,10 @@ redis-ha:
       save: '""'
   haproxy:
     # -- Enabled HAProxy LoadBalancing/Proxy
-    enabled: true
+    enabled: false
     metrics:
       # -- HAProxy enable prometheus metric scraping
-      enabled: true
+      enabled: false
   image:
     # -- Redis tag
     tag: 6.2.6-alpine
@@ -2066,7 +2066,7 @@ applicationSet:
 
 notifications:
   # -- Enable Notifications controller
-  enabled: true
+  enabled: false
 
   # -- Notifications controller name string
   name: notifications-controller
