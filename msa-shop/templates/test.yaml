@@ -1,25 +1,14 @@
 apiVersion: argoproj.io/v1alpha1
-kind: Workflow
+kind: Application
 metadata:
-  name: hello  
+  name: guestbook
+  namespace: argo
 spec:
-  entrypoint: test  # the first template to run in the workflows        
-  templates:
-  - name: test
-    resource:
-      action: create
-      manifest: |
-        apiVersion: v1
-        kind: Pod
-        metadata:
-          creationTimestamp: null
-          labels:
-            run: pod
-          name: pod
-        spec:
-          containers:
-          - image: nginx
-            name: pod
-            ports:
-            - containerPort: 80
-
+  project: default
+  source:
+    repoURL: https://github.com/argoproj/argocd-example-apps.git
+    targetRevision: HEAD
+    path: guestbook
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: guestbook
