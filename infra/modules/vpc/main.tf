@@ -7,11 +7,12 @@ resource "aws_vpc" "vpc" {
 
   tags = merge(var.default_tags, tomap({
     Name = "${var.aws_cluster_name}-vpc"
+    "kubernetes.io/cluster/${var.aws_cluster_name}" = "shared"
   }))
 }
 
 resource "aws_eip" "nat-eip" {
-  count = length(var.aws_cidr_subnets_private) == 0 ? 0: (var.use_nat_gateway ? length(var.aws_cidr_subnets_public):0) 
+  count = length(var.aws_cidr_subnets_private) == 0 ? 0: length(var.aws_cidr_subnets_public) 
   vpc   = true
 }
 
@@ -23,7 +24,7 @@ resource "aws_internet_gateway" "vpc-internetgw" {
   }))
 }
 
-resource "aws_subnet" "vpc-subnets-public" {
+resource "aws_subnet" "subnet-public" {
   vpc_id            = aws_vpc.vpc.id
   count             = length(var.aws_cidr_subnets_public)
   availability_zone = element(var.aws_avail_zones, count.index % length(var.aws_avail_zones))
@@ -31,16 +32,17 @@ resource "aws_subnet" "vpc-subnets-public" {
 
   tags = merge(var.default_tags, tomap({
     Name = "${var.aws_cluster_name}-${element(var.aws_avail_zones, count.index)}-public"
+    "kubernetes.io/cluster/${var.aws_cluster_name}" = "shared"
   }))
 }
 
 resource "aws_nat_gateway" "nat-gateway" {
-  count         = length(var.aws_cidr_subnets_private) == 0 ? 0: (var.use_nat_gateway ? length(var.aws_cidr_subnets_public):0)
+  count         = length(var.aws_cidr_subnets_private) == 0 ? 0: length(var.aws_cidr_subnets_public)
   allocation_id = element(aws_eip.nat-eip.*.id, count.index)
-  subnet_id     = element(aws_subnet.vpc-subnets-public.*.id, count.index)
+  subnet_id     = element(aws_subnet.subnet-public.*.id, count.index)
 }
 
-resource "aws_subnet" "vpc-subnets-private" {
+resource "aws_subnet" "subnet-private" {
   vpc_id            = aws_vpc.vpc.id
   count             = length(var.aws_cidr_subnets_private)
   availability_zone = element(var.aws_avail_zones, count.index % length(var.aws_avail_zones))
@@ -48,6 +50,7 @@ resource "aws_subnet" "vpc-subnets-private" {
 
   tags = merge(var.default_tags, tomap({
     Name = "${var.aws_cluster_name}-${element(var.aws_avail_zones, count.index)}-private"
+    "kubernetes.io/cluster/${var.aws_cluster_name}" = "shared"
   }))
 }
 
@@ -75,7 +78,7 @@ resource "aws_route_table" "private-route-table" {
 }
 
 resource "aws_route" "route_with_nat_gatway" {
-  count  = length(var.aws_cidr_subnets_private) == 0 ? 0: (var.use_nat_gateway ? length(var.aws_cidr_subnets_public):0) 
+  count  = length(var.aws_cidr_subnets_private) == 0 ? 0: length(var.aws_cidr_subnets_public) 
   route_table_id =  element(aws_route_table.private-route-table.*.id, count.index)
   destination_cidr_block = "0.0.0.0/0"
   nat_gateway_id = element(aws_nat_gateway.nat-gateway.*.id, count.index) 
@@ -84,13 +87,13 @@ resource "aws_route" "route_with_nat_gatway" {
 
 resource "aws_route_table_association" "public-rt-association" {
   count          = length(var.aws_cidr_subnets_public)
-  subnet_id      = element(aws_subnet.vpc-subnets-public.*.id, count.index)
+  subnet_id      = element(aws_subnet.subnet-public.*.id, count.index)
   route_table_id = aws_route_table.public-route-table.id
 }
 
 resource "aws_route_table_association" "private-rt-association" {
   count          = length(var.aws_cidr_subnets_private)
-  subnet_id      = element(aws_subnet.vpc-subnets-private.*.id, count.index)
+  subnet_id      = element(aws_subnet.subnet-private.*.id, count.index)
   route_table_id = element(aws_route_table.private-route-table.*.id, count.index)
 }
 
