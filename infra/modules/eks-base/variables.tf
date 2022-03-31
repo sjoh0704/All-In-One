@@ -54,12 +54,19 @@ variable "default_tags" {
   type        = map(string)
 }
 
-variable "aws_ec2_size" {
+variable "aws_instance_type" {
   type        = string
+  default     = "t2.medium"
 }
 
-variable "aws_ec2_num" {
+variable "aws_instance_num" {
   type        = number
+  default     = 1
+}
+
+variable "aws_instance_disk_size" {
+  type        = number
+  default     = 40
 }
 
 variable "aws_bastion_size" {
