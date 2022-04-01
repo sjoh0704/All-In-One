@@ -48,7 +48,6 @@ variable "aws_src_dest_check" {
   default	= true
 }
 
-
 variable "default_tags" {
   description = "Default tags for all resources"
   type        = map(string)
@@ -59,9 +58,13 @@ variable "aws_instance_type" {
   default     = "t2.medium"
 }
 
-variable "aws_instance_num" {
-  type        = number
-  default     = 1
+variable "aws_eks_instance_size" {
+  type = map(string)
+  default = {
+    "desired" = 1
+    "min" = 1
+    "max" = 3 
+  }
 }
 
 variable "aws_instance_disk_size" {
@@ -70,11 +73,21 @@ variable "aws_instance_disk_size" {
 }
 
 variable "aws_bastion_size" {
-  type        = string
+  type = string
+  default = "t2.micro"
 }
 
 variable "aws_bastion_num" {
-  type        = number
+  type = number
+  default = 1
 }
 
+variable "cluster_log_types" {
+  type = list
+  default = ["api", "audit"]
+}
 
+variable "cluster_version" {
+  type = string
+  default = "1.20"
+}
