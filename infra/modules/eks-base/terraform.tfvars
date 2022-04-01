@@ -14,7 +14,7 @@ default_tags = {}
 
 # #The number of EC2 and EC2 size
 
-aws_instance_type = "t2.medium"
+aws_instance_type = "t3.medium"
 
 aws_eks_instance_size = {
     desired = 1
@@ -23,5 +23,6 @@ aws_eks_instance_size = {
 }
 
 # # The number of bastion and bastion size
-aws_bastion_size = "t2.micro"
+aws_bastion_size = "t3.micro"
 aws_bastion_num = 1
+

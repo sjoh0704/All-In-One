@@ -14,6 +14,7 @@ module "aws-iam" {
 
 module "aws-security-group" {
   source = "../security-group"
+  aws_cluster_name = var.aws_cluster_name
   aws_vpc_id = module.aws-vpc.aws_vpc_id
   default_tags = var.default_tags
   workstation-external-cidr= "${chomp(data.http.workstation-external-ip.body)}/32"
@@ -51,6 +52,11 @@ resource "aws_eks_node_group" "eks-node-group" {
     "role" = "eks-${join("-", split(".", var.aws_instance_type))}"
   }
 
+  remote_access {
+    # source_security_group_ids = [module.aws-security-group.eks_node_security_group_id]
+    ec2_ssh_key = var.AWS_SSH_KEY_NAME
+  }
+
   scaling_config {
     desired_size = var.aws_eks_instance_size.desired
     min_size = var.aws_eks_instance_size.min
@@ -65,3 +71,19 @@ resource "aws_eks_node_group" "eks-node-group" {
     "Name" = "${var.aws_cluster_name}-${join("-", split(".", var.aws_instance_type))}-Node"
   }))
 }
+
+
+resource "aws_instance" "bastion" {
+  ami = data.aws_ami.distro.id
+  instance_type = var.aws_bastion_size
+  count = var.aws_bastion_num
+  associate_public_ip_address = true
+  subnet_id = element(module.aws-vpc.aws_subnet_ids_public, count.index)
+  vpc_security_group_ids = [module.aws-security-group.bastion_security_group_id]
+  key_name = var.AWS_SSH_KEY_NAME
+
+  tags = merge(var.default_tags, tomap({
+    "Name" = "${var.aws_cluster_name}-bastion"
+  }))
+}
+

@@ -89,5 +89,5 @@ variable "cluster_log_types" {
 
 variable "cluster_version" {
   type = string
-  default = "1.20"
+  default = "1.21"
 }
