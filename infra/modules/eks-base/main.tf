@@ -87,3 +87,10 @@ resource "aws_instance" "bastion" {
   }))
 }
 
+
+module "eks-add-on" {
+  source = "../addon"
+  aws_cluster_name = var.aws_cluster_name
+  # aws_vpc_id = module.aws-vpc.aws_vpc_id
+  # default_tags = var.default_tags
+}

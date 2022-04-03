@@ -1,5 +1,5 @@
 #Global Vars
-aws_cluster_name = "my-test"
+aws_cluster_name = "my-eks-test"
 
 #VPC Vars
 aws_vpc_cidr_block = "10.0.0.0/16"
@@ -14,7 +14,7 @@ default_tags = {}
 
 # #The number of EC2 and EC2 size
 
-aws_instance_type = "t3.medium"
+aws_instance_type = "m5.large"
 
 aws_eks_instance_size = {
     desired = 1

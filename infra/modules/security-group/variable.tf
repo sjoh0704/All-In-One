@@ -12,3 +12,7 @@ variable "aws_vpc_id" {
   description = "aws vpc id"
   type        = string
 }
+
+variable "aws_cluster_name" {
+  description = "Name of AWS Cluster"
+}
