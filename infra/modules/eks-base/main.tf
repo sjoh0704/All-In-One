@@ -102,3 +102,14 @@ module "helm-chart" {
   cluster_ca_cert = aws_eks_cluster.eks-cluster.certificate_authority[0].data
   cluster_endpoint = aws_eks_cluster.eks-cluster.endpoint 
 }
+
+
+resource "null_resource" "kubectl" {
+  provisioner "local-exec" {
+    command = "aws eks --region ${var.AWS_DEFAULT_REGION} update-kubeconfig --name ${var.aws_cluster_name}"
+  }
+
+    lifecycle {
+    create_before_destroy = true
+  }
+}
