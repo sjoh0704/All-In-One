@@ -42,14 +42,15 @@ resource "aws_eks_cluster" "eks-cluster" {
 
 resource "aws_eks_node_group" "eks-node-group" {
   cluster_name = aws_eks_cluster.eks-cluster.name
-  node_group_name = "eks-${join("-", split(".", var.aws_instance_type))}"
+  node_group_name = "eks-${join("-", split(".", var.aws_instance_type[0]))}"
   node_role_arn = module.aws-iam.eks_node_iam_role_arn
   subnet_ids = module.aws-vpc.aws_subnet_ids_private
-  instance_types = [var.aws_instance_type]
+  capacity_type = var.spot_instance ? "SPOT":"ON_DEMAND"
+  instance_types = var.aws_instance_type
   disk_size = var.aws_instance_disk_size
 
   labels = {
-    "role" = "eks-${join("-", split(".", var.aws_instance_type))}"
+    "role" = "eks-${join("-", split(".", var.aws_instance_type[0]))}"
   }
 
   remote_access {
@@ -68,7 +69,7 @@ resource "aws_eks_node_group" "eks-node-group" {
   ]
 
   tags = merge(var.default_tags, tomap({
-    "Name" = "${var.aws_cluster_name}-${join("-", split(".", var.aws_instance_type))}-Node"
+    "Name" = "${var.aws_cluster_name}-${join("-", split(".", var.aws_instance_type[0]))}-Node"
   }))
 }
 
@@ -87,10 +88,17 @@ resource "aws_instance" "bastion" {
   }))
 }
 
-
+## TODO: depend on 추가(첫번째 실행시 에러)
 module "eks-add-on" {
   source = "../addon"
   aws_cluster_name = var.aws_cluster_name
-  # aws_vpc_id = module.aws-vpc.aws_vpc_id
-  # default_tags = var.default_tags
+  default_tags = var.default_tags
+}
+
+
+module "helm-chart" {
+  source = "../helm-chart"
+  aws_cluster_name = var.aws_cluster_name
+  cluster_ca_cert = aws_eks_cluster.eks-cluster.certificate_authority[0].data
+  cluster_endpoint = aws_eks_cluster.eks-cluster.endpoint 
 }

@@ -43,19 +43,24 @@ variable "aws_cidr_subnets_private" {
 *
 */
 variable "aws_src_dest_check" {
-  description   = "Instance source/destination check of Kubernetes Cluster"
-  type          = bool
+  description = "Instance source/destination check of Kubernetes Cluster"
+  type = bool
   default	= true
 }
 
 variable "default_tags" {
   description = "Default tags for all resources"
-  type        = map(string)
+  type = map(string)
+}
+
+variable "spot_instance" {
+  type = bool
+  default = false
 }
 
 variable "aws_instance_type" {
-  type        = string
-  default     = "t2.medium"
+  type  = list(string)
+  default = ["t3.medium"]
 }
 
 variable "aws_eks_instance_size" {
@@ -68,13 +73,13 @@ variable "aws_eks_instance_size" {
 }
 
 variable "aws_instance_disk_size" {
-  type        = number
-  default     = 40
+  type = number
+  default = 40
 }
 
 variable "aws_bastion_size" {
   type = string
-  default = "t2.micro"
+  default = "t3.micro"
 }
 
 variable "aws_bastion_num" {

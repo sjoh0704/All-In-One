@@ -14,7 +14,9 @@ default_tags = {}
 
 # #The number of EC2 and EC2 size
 
-aws_instance_type = "m5.large"
+spot_instance = true
+
+aws_instance_type = ["m5.large"]
 
 aws_eks_instance_size = {
     desired = 1
