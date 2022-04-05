@@ -10,3 +10,7 @@ variable cluster_endpoint {
 variable cluster_ca_cert {
   type = string
 }
+
+variable ingress_values_path {
+  type = string
+}
