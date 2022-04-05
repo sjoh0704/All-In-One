@@ -102,6 +102,7 @@ module "helm-chart" {
   cluster_ca_cert = aws_eks_cluster.eks-cluster.certificate_authority[0].data
   cluster_endpoint = aws_eks_cluster.eks-cluster.endpoint 
   ingress_values_path = "../../helm-values/ingress.yaml"
+  argocd_values_path = "../../helm-values/argocd.yaml"
 }
 
 
