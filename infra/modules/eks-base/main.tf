@@ -93,16 +93,23 @@ module "eks-add-on" {
   source = "../addon"
   aws_cluster_name = var.aws_cluster_name
   default_tags = var.default_tags
+  
+  depends_on = [
+  aws_eks_node_group.eks-node-group,
+  aws_eks_cluster.eks-cluster
+  ]
 }
 
 
 module "helm-chart" {
   source = "../helm-chart"
-  aws_cluster_name = var.aws_cluster_name
-  cluster_ca_cert = aws_eks_cluster.eks-cluster.certificate_authority[0].data
-  cluster_endpoint = aws_eks_cluster.eks-cluster.endpoint 
   ingress_values_path = "../../helm-values/ingress.yaml"
   argocd_values_path = "../../helm-values/argocd.yaml"
+
+  depends_on = [
+  aws_eks_node_group.eks-node-group,
+  aws_eks_cluster.eks-cluster
+  ]
 }
 
 
@@ -110,8 +117,9 @@ resource "null_resource" "kubectl" {
   provisioner "local-exec" {
     command = "aws eks --region ${var.AWS_DEFAULT_REGION} update-kubeconfig --name ${var.aws_cluster_name}"
   }
-
-    lifecycle {
-    create_before_destroy = true
-  }
+  
+    depends_on = [
+  aws_eks_node_group.eks-node-group,
+  aws_eks_cluster.eks-cluster
+  ]
 }
