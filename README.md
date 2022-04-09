@@ -1,7 +1,6 @@
 # All-In-One
-- eks
+- terraform eks
+- addon vpc-cni
 - gitaction
-- istio
-- canary
-- argo
-- ...
+- istio flagger canary
+- argocd, argo rollout
