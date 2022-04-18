@@ -22,9 +22,13 @@ resource "helm_release" "argo-cd" {
 }
 
 resource "helm_release" "msa-chart" {
-  name       = "my-msa-chart"
+  name       = "msa-chart"
   chart      = "../msa-shop"
   create_namespace = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
 
     depends_on = [
       helm_release.argo-cd
