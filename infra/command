@@ -1,4 +1,4 @@
-terraform apply -var-file=../../credentials/credentials.tfvars
+terraform apply -var-file=./credentials/credentials.tfvars
 
 aws eks --region ap-northeast-2 update-kubeconfig --name my-eks-test
 

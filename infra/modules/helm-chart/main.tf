@@ -23,6 +23,10 @@ resource "helm_release" "argo-cd" {
 
 resource "helm_release" "msa-chart" {
   name       = "my-msa-chart"
-  chart      = "../../../msa-shop"
+  chart      = "../msa-shop"
   create_namespace = true
+
+    depends_on = [
+      helm_release.argo-cd
+  ]
 }
