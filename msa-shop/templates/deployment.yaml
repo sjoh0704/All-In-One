@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: default
+  name: api-gw
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gw 
+  template:
+    metadata:
+      labels:
+        app: api-gw 
+    spec:
+      containers:
+      - name: api-gw 
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 5
+
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 0
+          periodSeconds: 3
+
+        volumeMounts:
+        - mountPath: /etc/nginx/conf.d/api-gw.conf
+          readOnly: true
+          name: config
+          subPath: api-gw.conf
+
+      volumes:
+      - name: config
+        configMap:
+          name: api-gw-cm
+          items:
+            - key: api-gw.conf
+              path: api-gw.conf
