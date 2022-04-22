@@ -1,14 +1,14 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-    name: frontend
+    name: front
     finalizers:
         - resources-finalizer.argocd.argoproj.io
     namespace: argo
 spec:
     project: default
     source:
-        repoURL: https://github.com/sjoh0704/All-In-One-front.git
+        repoURL: https://github.com/sjoh0704/All-In-One-Front.git
         targetRevision: HEAD
         path: chart/front
     destination:
