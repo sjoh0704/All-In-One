@@ -1,7 +1,7 @@
 replicas: 1
 image:
-  registry: docker.io
-  repository: tmdwn0704/all-in-one-front
+  repository: docker.io/tmdwn0704
+  registry: all-in-one-front
   tag: test28
   imagePullPolicy: Always
 
