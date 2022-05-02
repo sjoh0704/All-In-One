@@ -1,8 +1,8 @@
 replicas: 1
 image:
-  repository: $IMAGE_REPO
-  registry: $APP_NAME
-  tag: $RELEASE_VERSION
+  repository: public.ecr.aws/x4j4s8t3
+  registry: all-in-one-front
+  tag: test57
   imagePullPolicy: Always
 
 service:
