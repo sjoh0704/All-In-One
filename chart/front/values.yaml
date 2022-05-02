@@ -1,8 +1,8 @@
 replicas: 1
 image:
-  repository: docker.io/tmdwn0704
-  registry: all-in-one-front
-  tag: test28
+  repository: $IMAGE_REPO
+  registry: $APP_NAME
+  tag: $RELEASE_VERSION
   imagePullPolicy: Always
 
 service:
