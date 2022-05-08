@@ -4,7 +4,7 @@ metadata:
   name: {{ .Release.Name }}-api-gw
   namespace: {{ .Release.Namespace }}
 spec:
-  replicas: {{ .Values.api-gw.replicas }}
+  replicas: {{ .Values.apigateway.replicas }}
   selector:
     matchLabels:
       app: api-gw 

@@ -10,7 +10,7 @@ application:
       allowEmpty: false
 
 
-api-gw:
+apigateway:
   replicas: 1
 
 
