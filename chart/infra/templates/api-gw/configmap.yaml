@@ -2,33 +2,33 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: api-gw-cm
-  namespace: default
+  namespace: {{ .Release.Namespace }}
 data:
   api-gw.conf: |
 
     resolver 10.96.0.10;
 
     upstream user{
-        server user.default.svc.cluster.local:8080;
+        server user.{{ .Release.Namespace }}.svc.cluster.local:8080;
         keepalive 32;
     }
 
     upstream product{
-        server product.default.svc.cluster.local:8080;
+        server product.{{ .Release.Namespace }}.svc.cluster.local:8080;
         keepalive 32;
     }
     upstream rating{
-        server rating.default.svc.cluster.local:8080;
+        server rating.{{ .Release.Namespace }}.svc.cluster.local:8080;
         keepalive 32;
     }
 
     upstream cart{
-        server cart.default.svc.cluster.local:8080;
+        server cart.{{ .Release.Namespace }}.svc.cluster.local:8080;
         keepalive 32;
     }
 
     upstream order{
-        server order.default.svc.cluster.local:8080;
+        server order.{{ .Release.Namespace }}.svc.cluster.local:8080;
         keepalive 32;
     }
 

@@ -1,0 +1,141 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+    name: {{ .Release.Name }}-front
+    finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    namespace: argo
+spec:
+    project: default
+    source:
+        repoURL: {{ .Values.application.source.repoURL }}
+        targetRevision: {{ .Values.application.source.targetRevision }}
+        path: chart/front
+    destination:
+        server: https://kubernetes.default.svc
+        namespace: {{ .Release.Namespace }}
+    syncPolicy:
+        automated:
+            prune: {{ .Values.application.syncPolicy.automated.prune }}
+            selfHeal: {{ .Values.application.syncPolicy.automated.selfHeal }}
+            allowEmpty: {{ .Values.application.syncPolicy.automated.allowEmpty }}
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+    name: {{ .Release.Name }}-product
+    finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    namespace: argo
+spec:
+    project: default
+    source:
+        repoURL: {{ .Values.application.source.repoURL }}
+        targetRevision: {{ .Values.application.source.targetRevision }}
+        path: chart/product
+    destination:
+        server: https://kubernetes.default.svc
+        namespace: {{ .Release.Namespace }}
+    syncPolicy:
+        automated:
+            prune: {{ .Values.application.syncPolicy.automated.prune }}
+            selfHeal: {{ .Values.application.syncPolicy.automated.selfHeal }}
+            allowEmpty: {{ .Values.application.syncPolicy.automated.allowEmpty }}
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+    name: {{ .Release.Name }}-order
+    finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    namespace: argo
+spec:
+    project: default
+    source:
+        repoURL: {{ .Values.application.source.repoURL }}
+        targetRevision: {{ .Values.application.source.targetRevision }}
+        path: chart/order
+    destination:
+        server: https://kubernetes.default.svc
+        namespace: {{ .Release.Namespace }}
+    syncPolicy:
+        automated:
+            prune: {{ .Values.application.syncPolicy.automated.prune }}
+            selfHeal: {{ .Values.application.syncPolicy.automated.selfHeal }}
+            allowEmpty: {{ .Values.application.syncPolicy.automated.allowEmpty }}
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+    name: {{ .Release.Name }}-user
+    finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    namespace: argo
+spec:
+    project: default
+    source:
+        repoURL: {{ .Values.application.source.repoURL }}
+        targetRevision: {{ .Values.application.source.targetRevision }}
+        path: chart/user
+    destination:
+        server: https://kubernetes.default.svc
+        namespace: {{ .Release.Namespace }}
+    syncPolicy:
+        automated:
+            prune: {{ .Values.application.syncPolicy.automated.prune }}
+            selfHeal: {{ .Values.application.syncPolicy.automated.selfHeal }}
+            allowEmpty: {{ .Values.application.syncPolicy.automated.allowEmpty }}
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+    name: {{ .Release.Name }}-rating
+    finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    namespace: argo
+spec:
+    project: default
+    source:
+        repoURL: {{ .Values.application.source.repoURL }}
+        targetRevision: {{ .Values.application.source.targetRevision }}
+        path: chart/rating
+    destination:
+        server: https://kubernetes.default.svc
+        namespace: {{ .Release.Namespace }}
+    syncPolicy:
+        automated:
+            prune: {{ .Values.application.syncPolicy.automated.prune }}
+            selfHeal: {{ .Values.application.syncPolicy.automated.selfHeal }}
+            allowEmpty: {{ .Values.application.syncPolicy.automated.allowEmpty }}
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+    name: {{ .Release.Name }}-cart
+    finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    namespace: argo
+spec:
+    project: default
+    source:
+        repoURL: {{ .Values.application.source.repoURL }}
+        targetRevision: {{ .Values.application.source.targetRevision }}
+        path: chart/cart
+    destination:
+        server: https://kubernetes.default.svc
+        namespace: {{ .Release.Namespace }}
+    syncPolicy:
+        automated:
+            prune: {{ .Values.application.syncPolicy.automated.prune }}
+            selfHeal: {{ .Values.application.syncPolicy.automated.selfHeal }}
+            allowEmpty: {{ .Values.application.syncPolicy.automated.allowEmpty }}

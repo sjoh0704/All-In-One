@@ -1,0 +1,16 @@
+application:
+  source:
+    repoURL: https://github.com/sjoh0704/All-In-One.git
+    targetRevision: HEAD
+
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: false
+      allowEmpty: false
+
+
+api-gw:
+  replicas: 1
+
+

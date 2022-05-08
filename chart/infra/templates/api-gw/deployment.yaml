@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: default
-  name: api-gw
+  name: {{ .Release.Name }}-api-gw
+  namespace: {{ .Release.Namespace }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.api-gw.replicas }}
   selector:
     matchLabels:
       app: api-gw 
