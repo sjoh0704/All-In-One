@@ -2,8 +2,8 @@ app:
   replicas: 1
   image:
     repository: public.ecr.aws/x4j4s8t3
-    registry: all-in-one-order
-    tag: 1.1
+    registry: all-in-one-cart
+    tag: test2
     imagePullPolicy: Always
   service:
     type: "ClusterIP" 
