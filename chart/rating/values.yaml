@@ -3,7 +3,7 @@ app:
   image:
     repository: public.ecr.aws/x4j4s8t3
     registry: all-in-one-rating
-    tag: 1.1
+    tag: test2
     imagePullPolicy: Always
   service:
     type: "ClusterIP" 
