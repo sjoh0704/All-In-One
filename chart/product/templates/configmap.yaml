@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: product-url
+data:
+  ORDER_SERVICE_URL: 'http://order.{{ .Release.Namespace }}.svc:8080'
+  USER_SERVICE_URL: 'http://user.{{ .Release.Namespace }}.svc:8080'
+  CART_SERVICE_URL: 'http://cart.{{ .Release.Namespace }}.svc:8080'
+  RATING_SERVICE_URL: 'http://rating.{{ .Release.Namespace }}.svc:8080'
+  
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: product-db
+data:
+  MYSQL_ID: 'root'
+  MYSQL_ROOT_PASSWORD: 'root' ## TODO secret으로 빼기 
+  MYSQL_DB: 'product'
+  MYSQL_HOST: 'product-db.{{ .Release.Namespace }}.svc'
