@@ -2,7 +2,7 @@ replicas: 1
 image:
   repository: public.ecr.aws/x4j4s8t3
   registry: all-in-one-front
-  tag: 1.1
+  tag: 1.2
   imagePullPolicy: Always
 
 service:
