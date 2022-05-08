@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-rating
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: rating
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: rating
+    spec:
+      containers:
+      - name: rating-container
+        image: {{ default 1 .Values.app.replicas }}
+        command: ["/bin/sh", "-c"]
+        args:
+        - ./wait-for-it.sh rating-db.{{ .Release.Namespace }}.svc:27017 -t 0;
+          node app.js;
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: rating-url
+        - configMapRef:
+            name: rating-db
+
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 120
+          periodSeconds: 5
+
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080 
+          initialDelaySeconds: 0
+          periodSeconds: 2
+
+--- 
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-rating-db
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ default 1 .Values.db.replicas }}
+  selector:
+    matchLabels:
+      app: rating-db
+  template:
+    metadata:
+      labels:
+        app: rating-db
+    spec:
+      containers:
+      - image: mongo
+        name: mongo-container
+        ports:
+        - containerPort: 27017
+          name: mysql
+        volumeMounts:
+        - name: rating-volume
+          mountPath: /data/db
+      volumes:
+      - name: rating-volume
+        emptyDir: {}
+        ## TODO: storage class
+        # persistentVolumeClaim:
+        #   claimName:  rating-pvc

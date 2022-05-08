@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rating
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    app: rating
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      {{- if eq .Values.service.type "NodePort" }}
+      nodePort: {{ .Values.service.nodePort }}
+      {{- else if eq .Values.service.type "LoadBalancer" }}
+      nodePort: {{ .Values.service.nodePort }}
+      {{- end }}
+  type: {{ .Values.service.type }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: rating-db
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+  selector:
+    app: rating-db
