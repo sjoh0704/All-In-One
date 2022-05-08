@@ -1,0 +1,12 @@
+app:
+  replicas: 1
+  image:
+    repository: public.ecr.aws/x4j4s8t3
+    registry: all-in-one-order
+    tag: 1.1
+    imagePullPolicy: Always
+  service:
+    type: "ClusterIP" 
+
+db:
+  replicas: 1

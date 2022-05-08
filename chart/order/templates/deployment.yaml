@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-order
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: order
+  replicas: {{ default 1 .Values.app.replicas }}
+  template:
+    metadata:
+      labels:
+        app: order
+    spec:
+      containers:
+      - name: order-container
+        image: {{ .Values.app.image.repository }}/{{ .Values.app.image.registry }}:{{ .Values.app.image.tag }}
+        command: ["/bin/sh", "-c"]
+        args:
+        - ./wait-for-it.sh order-db.{{ .Release.Namespace }}.svc:3306 -t 0;
+          python3 manage.py makemigrations sale;
+          python3 manage.py makemigrations purchase;
+          python3 manage.py migrate;
+          python3 manage.py runserver 0.0.0.0:8000;
+        imagePullPolicy: {{ .Values.app.image.imagePullPollicy }}
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: order-url
+        - configMapRef:
+            name: order-db
+
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 120
+          periodSeconds: 5
+
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 0
+          periodSeconds: 2
+
+--- 
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-order-db
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ default 1 .Values.db.replicas }}
+  selector:
+    matchLabels:
+      app: order-db
+  template:
+    metadata:
+      labels:
+        app: order-db
+    spec:
+      containers:
+      - image: mysql:5.6
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom: 
+            configMapKeyRef:
+              name: order-db
+              key: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_DATABASE
+          valueFrom: 
+            configMapKeyRef:
+              name: order-db
+              key: MYSQL_DB             
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: order-volume
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: order-volume
+        emptyDir: {}
+        ## TODO: storage class
+        # persistentVolumeClaim:
+        #   claimName:  order-pvc
