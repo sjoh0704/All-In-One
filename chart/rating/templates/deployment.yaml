@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       app: rating
-  replicas: 1
+  replicas: {{ default 1 .Values.app.replicas }}
   template:
     metadata:
       labels:
@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: rating-container
-        image: {{ default 1 .Values.app.replicas }}
+        image: {{ .Values.app.image.repository }}/{{ .Values.app.image.registry }}:{{ .Values.app.image.tag }}
         command: ["/bin/sh", "-c"]
         args:
         - ./wait-for-it.sh rating-db.{{ .Release.Namespace }}.svc:27017 -t 0;
