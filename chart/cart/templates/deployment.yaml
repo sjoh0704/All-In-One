@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-cart
+spec:
+  selector:
+    matchLabels:
+      app: cart
+  replicas: {{ default 1 .Values.app.replicas }}
+  template:
+    metadata:
+      labels:
+        app: cart
+    spec:
+      containers:
+      - name: cart-container
+        image: {{ .Values.app.image.repository }}/{{ .Values.app.image.registry }}:{{ .Values.app.image.tag }}
+        command: ["/bin/sh", "-c"]
+        args:
+        - ./wait-for-it.sh cart-db.{{ .Release.Namespace }}.svc:27017 -t 0;
+          node app.js;
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: cart-url
+        - configMapRef:
+            name: cart-db
+
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 120
+          periodSeconds: 5
+
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080 
+          initialDelaySeconds: 0
+          periodSeconds: 2
+
+--- 
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-cart-db
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ default 1 .Values.db.replicas }}
+  selector:
+    matchLabels:
+      app: cart-db
+  template:
+    metadata:
+      labels:
+        app: cart-db
+    spec:
+      containers:
+      - image: mongo
+        name: mongo-container
+        ports:
+        - containerPort: 27017
+          name: mysql
+        volumeMounts:
+        - name: cart-volume
+          mountPath: /data/db
+      volumes:
+      - name: cart-volume
+        emptyDir: {}
+        ## TODO: storage class
+        # persistentVolumeClaim:
+        #   claimName:  cart-pvc
