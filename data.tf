@@ -15,3 +15,11 @@ data aws_availability_zones available {}
 data "http" "workstation-external-ip" {
   url = "http://ipv4.icanhazip.com"
 }
+
+data "aws_vpc_endpoint_service" "ecr_dkr" {
+  service_type = "Interface"
+  filter {
+    name   = "service-name"
+    values = ["*ecr.dkr*"]
+  }
+}

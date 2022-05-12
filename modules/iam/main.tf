@@ -1,4 +1,4 @@
-# eks-cluster iam
+# EKS control plane IAM ROLE
 resource "aws_iam_role" "eks-cluster" {
   name = "eks-cluster"
 
@@ -29,7 +29,7 @@ resource "aws_iam_role_policy_attachment" "eks-cluster-AmazonEKSVPCResourceContr
 }
 
 
-# eks-node iam 
+# EKS node IAM ROLE 
 resource "aws_iam_role" "eks-node" {
   name = "eks-node"
 

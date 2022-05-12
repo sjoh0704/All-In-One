@@ -20,7 +20,7 @@ module "aws-security-group" {
   workstation-external-cidr= "${chomp(data.http.workstation-external-ip.body)}/32"
 }
 
-
+# EKS cluster 
 resource "aws_eks_cluster" "eks-cluster" {
   name = var.aws_cluster_name
   role_arn = module.aws-iam.eks_cluster_iam_role_arn
@@ -39,7 +39,7 @@ resource "aws_eks_cluster" "eks-cluster" {
     module.aws-iam.eks_cluster_iam_role_policy_attachment_dependencies
     ]
 }
-
+# EKS node 
 resource "aws_eks_node_group" "eks-node-group" {
   cluster_name = aws_eks_cluster.eks-cluster.name
   node_group_name = "eks-${join("-", split(".", var.aws_instance_type[0]))}"
@@ -54,7 +54,6 @@ resource "aws_eks_node_group" "eks-node-group" {
   }
 
   remote_access {
-    # source_security_group_ids = [module.aws-security-group.eks_node_security_group_id]
     ec2_ssh_key = var.AWS_SSH_KEY_NAME
   }
 
@@ -101,16 +100,16 @@ module "eks-add-on" {
 }
 
 
-module "helm-chart" {
-  source = "./modules/helm-chart"
-  ingress_values_path = "./helm-values/ingress.yaml"
-  argocd_values_path = "./helm-values/argocd.yaml"
+# module "helm-chart" {
+#   source = "./modules/helm-chart"
+#   ingress_values_path = "./helm-values/ingress.yaml"
+#   argocd_values_path = "./helm-values/argocd.yaml"
 
-  depends_on = [
-  aws_eks_node_group.eks-node-group,
-  aws_eks_cluster.eks-cluster
-  ]
-}
+#   depends_on = [
+#   aws_eks_node_group.eks-node-group,
+#   aws_eks_cluster.eks-cluster
+#   ]
+# }
 
 
 resource "null_resource" "kubectl" {
@@ -126,4 +125,20 @@ resource "null_resource" "kubectl" {
   aws_eks_node_group.eks-node-group,
   aws_eks_cluster.eks-cluster
   ]
+}
+
+
+# vpc endpoint
+resource "aws_vpc_endpoint" "ecr_registry" {
+  vpc_id            = module.aws-vpc.aws_vpc_id
+  service_name      = data.aws_vpc_endpoint_service.ecr_dkr.service_name
+  vpc_endpoint_type = "Interface"
+
+  security_group_ids  = [module.aws-security-group.vpc_endpoint_ecr_security_group_id]
+  subnet_ids          = module.aws-vpc.aws_subnet_ids_private
+  private_dns_enabled = true
+
+  tags = {
+    Name        = "${var.aws_cluster_name}-ecr-endpoint"
+  }
 }

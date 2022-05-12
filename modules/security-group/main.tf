@@ -1,35 +1,34 @@
-
-# eks cluster
-## TO DO: 시큐리티 그룹 최적화
+## EKS SG 
+# control plane
 resource "aws_security_group" "eks-cluster" {
   name = "eks-cluster"
   description = "Cluster communication with worker nodes"
   vpc_id = var.aws_vpc_id
 
   tags = merge(var.default_tags, tomap({
-    Name = "${var.aws_cluster_name}-eks-cluster"
+    Name = "${var.aws_cluster_name}-eks-controlplane"
   }))
 }
 
+# 권장 아웃 바운드
 resource "aws_security_group_rule" "eks-cluster-egress" {
   type = "egress" 
-  cidr_blocks = ["0.0.0.0/0"]
+  cidr_blocks = ["0.0.0.0/0"]  # to
   to_port = 65535
-  from_port = 0
+  from_port = 1025
   protocol = "-1"
   security_group_id = aws_security_group.eks-cluster.id 
 }
 
+# 권장 인바운드 
 resource "aws_security_group_rule" "eks-cluster-ingress" {
-    ## TO DO: 나만 들어갈 수 있는건지 체크
   type = "ingress"
-  cidr_blocks = [var.workstation-external-cidr]
+  cidr_blocks = [var.workstation-external-cidr] # 나만 kubectl 가능
   to_port = 443
   from_port = 443
   protocol = "tcp"
   security_group_id = aws_security_group.eks-cluster.id
 }
-
 
 # node group 
 resource "aws_security_group" "eks-node" {
@@ -41,15 +40,17 @@ resource "aws_security_group" "eks-node" {
   }))
 }
 
+# 권장 아웃바운드 
 resource "aws_security_group_rule" "eks-node-egress" {
   type = "egress"
   cidr_blocks = ["0.0.0.0/0"]
-  to_port = 65535
+  to_port = 65535 # 모두
   from_port = 0
-  protocol = "-1"
+  protocol = "-1" # 모두 
   security_group_id = aws_security_group.eks-node.id 
 }
 
+# 권장 인바운드 
 resource "aws_security_group_rule" "eks-node-ingress" {
   type = "ingress"
   cidr_blocks = ["0.0.0.0/0"]
@@ -59,11 +60,7 @@ resource "aws_security_group_rule" "eks-node-ingress" {
   security_group_id = aws_security_group.eks-node.id
 }
 
-
-
-
-
-# bastion
+## Bastion SG
 resource "aws_security_group" "bastion" {
   name = "bastion"
   vpc_id = var.aws_vpc_id
@@ -91,4 +88,30 @@ resource "aws_security_group_rule" "bastion-ingress" {
   security_group_id = aws_security_group.bastion.id
 }
 
+# VPC endpoint
+resource "aws_security_group" "vpc-endpoint-ecr" {
+  name = "vpc-endpoint-ecr"
+  vpc_id = var.aws_vpc_id
 
+  tags = merge(var.default_tags, tomap({
+    Name = "${var.aws_cluster_name}-vpc-endpoint-ecr"
+  }))
+}
+
+resource "aws_security_group_rule" "vpc-endpoint-ecr-egress" {
+  type = "egress"
+  cidr_blocks = ["0.0.0.0/0"]
+  to_port = 65535
+  from_port = 0
+  protocol = "-1"
+  security_group_id = aws_security_group.vpc-endpoint-ecr.id 
+}
+
+resource "aws_security_group_rule" "vpc-endpoint-ecr-ingress" {
+  type = "ingress"
+  cidr_blocks = ["0.0.0.0/0"]
+  to_port = 22
+  from_port = 22
+  protocol = "tcp"
+  security_group_id = aws_security_group.vpc-endpoint-ecr.id
+}
