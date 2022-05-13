@@ -10,3 +10,12 @@ aws eks --region ap-northeast-2 update-kubeconfig --name my-eks-test
 .terraform-version에서 참조
 tfenv list
 tfenv use [version]
+
+< 사전 준비 >
+- aws configure
+- install kubectl
+- tfenv install
+
+<memo>
+- eks addon에 vpc cni가 없으면 node 생성에서 실패하는 듯
+- control plane - 10:30 / worker 5:30

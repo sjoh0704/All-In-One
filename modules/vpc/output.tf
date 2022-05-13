@@ -10,10 +10,6 @@ output "aws_subnet_ids_public" {
   value = aws_subnet.subnet-public.*.id
 }
 
-output "aws_security_group" {
-  value = aws_security_group.security-group.*.id
-}
-
 output "default_tags" {
   value = var.default_tags
 }

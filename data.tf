@@ -10,16 +10,24 @@ data "aws_ami" "distro" {
    owners =["137112412989"]
 }
 
+# AZ
 data aws_availability_zones available {}
 
+# My Location
 data "http" "workstation-external-ip" {
   url = "http://ipv4.icanhazip.com"
 }
 
-data "aws_vpc_endpoint_service" "ecr_dkr" {
-  service_type = "Interface"
-  filter {
-    name   = "service-name"
-    values = ["*ecr.dkr*"]
-  }
-}
+# get ECR service
+# data "aws_vpc_endpoint_service" "ecr_dkr" {
+#   service_type = "Interface"
+#   filter {
+#     name   = "service-name"
+#     values = ["*ecr.dkr*"]
+#   }
+# }
+
+# oidc 
+# output "identity-oidc-issuer" {
+#   value = data.aws_eks_cluster.eks-cluster.identity[0].oidc[0].issuer
+# }
