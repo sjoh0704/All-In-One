@@ -21,10 +21,10 @@ variable "addons" {
       version = "v1.21.2-eksbuild.2"
     },
     ## TODO: vpc 모드 전환
-    # {
-    #   name    = "vpc-cni"
-    #   version = "v1.10.1-eksbuild.1"
-    # },
+    {
+      name    = "vpc-cni"
+      version = "v1.10.1-eksbuild.1"
+    },
     {
       name    = "coredns"
       version = "v1.8.4-eksbuild.1"

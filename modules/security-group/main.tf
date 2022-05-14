@@ -1,7 +1,6 @@
-## EKS SG 
-# control plane
-resource "aws_security_group" "eks-cluster" {
-  name = "eks-cluster"
+## EKS control plane SG 
+resource "aws_security_group" "eks-controlplane" {
+  name = "eks-controlplane"
   description = "Cluster communication with worker nodes"
   vpc_id = var.aws_vpc_id
 
@@ -10,54 +9,22 @@ resource "aws_security_group" "eks-cluster" {
   }))
 }
 
-# 권장 아웃 바운드
-resource "aws_security_group_rule" "eks-cluster-egress" {
+resource "aws_security_group_rule" "eks-controlplane-egress" {
   type = "egress" 
   cidr_blocks = ["0.0.0.0/0"]  # to
   to_port = 65535
   from_port = 0
   protocol = "-1"
-  security_group_id = aws_security_group.eks-cluster.id 
+  security_group_id = aws_security_group.eks-controlplane.id 
 }
 
-# 권장 인바운드 
-resource "aws_security_group_rule" "eks-cluster-ingress" {
+resource "aws_security_group_rule" "eks-controlplane-ingress" {
   type = "ingress"
-  cidr_blocks = [var.workstation-external-cidr] # 나만 kubectl 가능
+  cidr_blocks = [var.workstation-external-cidr] # 나만 접근 가능
   to_port = 443
   from_port = 443
   protocol = "tcp"
-  security_group_id = aws_security_group.eks-cluster.id
-}
-
-# node group 
-resource "aws_security_group" "eks-node" {
-  name = "eks-node"
-  vpc_id = var.aws_vpc_id
-
-  tags = merge(var.default_tags, tomap({
-    Name = "${var.aws_cluster_name}-eks-node"
-  }))
-}
-
-# 권장 아웃바운드 
-resource "aws_security_group_rule" "eks-node-egress" {
-  type = "egress"
-  cidr_blocks = ["0.0.0.0/0"]
-  to_port = 65535 # 모두
-  from_port = 0
-  protocol = "-1" # 모두 
-  security_group_id = aws_security_group.eks-node.id 
-}
-
-# 권장 인바운드 
-resource "aws_security_group_rule" "eks-node-ingress" {
-  type = "ingress"
-  cidr_blocks = ["0.0.0.0/0"]
-  to_port = 65535
-  from_port = 0
-  protocol = "-1"
-  security_group_id = aws_security_group.eks-node.id
+  security_group_id = aws_security_group.eks-controlplane.id
 }
 
 ## Bastion SG

@@ -29,8 +29,8 @@ resource "aws_eks_cluster" "eks-cluster" {
   enabled_cluster_log_types = var.cluster_log_types
 
   vpc_config {
-    security_group_ids = [module.aws-security-group.eks_cluster_security_group_id]
-    subnet_ids = concat(module.aws-vpc.aws_subnet_ids_public, module.aws-vpc.aws_subnet_ids_private)
+    security_group_ids = [module.aws-security-group.eks_controlplane_security_group_id] # cluster SG 설정
+    subnet_ids = concat(module.aws-vpc.aws_subnet_ids_public, module.aws-vpc.aws_subnet_ids_private) ## public에도 있어야 public outbound LB 생성 가능 
     endpoint_private_access = true
     endpoint_public_access = true
   }
@@ -39,6 +39,7 @@ resource "aws_eks_cluster" "eks-cluster" {
     module.aws-iam.eks_cluster_iam_role_policy_attachment_dependencies
     ]
 }
+
 # EKS node 
 resource "aws_eks_node_group" "eks-node-group" {
   cluster_name = aws_eks_cluster.eks-cluster.name
@@ -70,6 +71,7 @@ resource "aws_eks_node_group" "eks-node-group" {
   tags = merge(var.default_tags, tomap({
     "Name" = "${var.aws_cluster_name}-${join("-", split(".", var.aws_instance_type[0]))}-Node"
   }))
+    
 }
 
 
@@ -95,50 +97,33 @@ module "eks-add-on" {
   
   depends_on = [
   aws_eks_node_group.eks-node-group,
-  aws_eks_cluster.eks-cluster
   ]
 }
 
 
 # module "helm-chart" {
-#   source = "./modules/helm-chart"
-#   ingress_values_path = "./helm-values/ingress.yaml"
+#   source = "./modules/helm"
+#   # ingress_values_path = "./helm-values/ingress.yaml"
 #   argocd_values_path = "./helm-values/argocd.yaml"
 
 #   depends_on = [
 #   aws_eks_node_group.eks-node-group,
-#   aws_eks_cluster.eks-cluster
+
 #   ]
 # }
 
 
-resource "null_resource" "kubectl" {
-  provisioner "local-exec" {
-    command = "aws eks --region ${var.AWS_DEFAULT_REGION} update-kubeconfig --name ${var.aws_cluster_name}"
-  }
-  
-    lifecycle {
-    create_before_destroy = true
-  }
-  
-    depends_on = [
-  aws_eks_node_group.eks-node-group,
-  aws_eks_cluster.eks-cluster
-  ]
-}
-
-
 # vpc endpoint
-resource "aws_vpc_endpoint" "ecr_registry" {
-  vpc_id            = module.aws-vpc.aws_vpc_id
-  service_name      = data.aws_vpc_endpoint_service.ecr_dkr.service_name
-  vpc_endpoint_type = "Interface"
+# resource "aws_vpc_endpoint" "ecr_registry" {
+#   vpc_id            = module.aws-vpc.aws_vpc_id
+#   service_name      = data.aws_vpc_endpoint_service.ecr_dkr.service_name
+#   vpc_endpoint_type = "Interface"
 
-  security_group_ids  = [module.aws-security-group.vpc_endpoint_ecr_security_group_id]
-  subnet_ids          = module.aws-vpc.aws_subnet_ids_private
-  private_dns_enabled = true
+#   security_group_ids  = [module.aws-security-group.vpc_endpoint_ecr_security_group_id]
+#   subnet_ids          = module.aws-vpc.aws_subnet_ids_private
+#   private_dns_enabled = true
 
-  tags = {
-    Name        = "${var.aws_cluster_name}-ecr-endpoint"
-  }
-}
+#   tags = {
+#     Name        = "${var.aws_cluster_name}-ecr-endpoint"
+#   }
+# }
