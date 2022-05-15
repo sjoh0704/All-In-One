@@ -115,16 +115,21 @@ resource "aws_iam_openid_connect_provider" "oidc" {
   url = aws_eks_cluster.eks-cluster.identity[0].oidc[0].issuer
 }
 
-# module "helm-chart" {
-#   source = "./modules/helm"
-#   # ingress_values_path = "./helm-values/ingress.yaml"
-#   argocd_values_path = "./helm-values/argocd.yaml"
+module "helm" {
+  source = "./modules/helm"
+  aws_cluster_name = var.aws_cluster_name
 
-#   depends_on = [
-#   aws_eks_node_group.eks-node-group,
-
-#   ]
-# }
+  # argocd
+  argocd_values_path = "./helm-values/argocd.yaml"
+  
+  # alb controller
+  aws_load_balancer_controller_values_path = "./helm-values/aws-load-balancer-controller.yaml"
+  eks_aws_load_balancer_controller_iam_role_arn = module.aws-iam.eks_aws_load_balancer_controller_iam_role_arn
+  
+  depends_on = [
+  aws_eks_node_group.eks-node-group,
+  ]
+}
 
 
 # vpc endpoint

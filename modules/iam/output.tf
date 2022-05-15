@@ -36,3 +36,7 @@ output addon_iam_role_policy_attachment_dependencies {
     ]
 }
 
+# oidc - aws-load-balancer-controller
+output eks_aws_load_balancer_controller_iam_role_arn {
+    value = aws_iam_role.aws-load-balancer-controller.arn
+}

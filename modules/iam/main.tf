@@ -69,3 +69,24 @@ resource "aws_iam_role_policy_attachment" "vpc-cni-policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
   role       = aws_iam_role.vpc-cni.name
 }
+
+# oidc - aws-load-balancer-controller role
+resource "aws_iam_role" "aws-load-balancer-controller" {
+  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
+  name = "aws-load-balancer-controller-role"
+}
+
+
+
+
+
+resource "aws_iam_role_policy_attachment" "aws-load-balancer-controller-policy" {
+  policy_arn = aws_iam_policy.aws-load-balancer-controller.arn
+  role = aws_iam_role.aws-load-balancer-controller.name
+}
+
+
+resource "aws_iam_policy" "aws-load-balancer-controller" {
+  name = "AWSLoadBalancerControllerIAMPolicy"
+  policy = "${file("${path.module}/policy/aws-load-balancer-controller-iam-policy.json")}"
+}
