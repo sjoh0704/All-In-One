@@ -28,3 +28,5 @@ aws_eks_instance_size = {
 aws_bastion_size = "t3.micro"
 aws_bastion_num = 1
 
+# eks control plane logging
+cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]

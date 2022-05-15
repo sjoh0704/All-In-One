@@ -28,6 +28,7 @@ data "http" "workstation-external-ip" {
 # }
 
 # oidc 
-# output "identity-oidc-issuer" {
-#   value = data.aws_eks_cluster.eks-cluster.identity[0].oidc[0].issuer
-# }
+data "tls_certificate" "tls-certicate" {
+  url = aws_eks_cluster.eks-cluster.identity[0].oidc[0].issuer
+}
+

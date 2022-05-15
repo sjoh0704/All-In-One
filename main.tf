@@ -1,3 +1,4 @@
+# VPC
 module "aws-vpc" {
   source = "./modules/vpc"
   aws_cluster_name = var.aws_cluster_name
@@ -8,10 +9,14 @@ module "aws-vpc" {
   default_tags = var.default_tags
 }
 
+# IAM
 module "aws-iam" {
+  aws_iam_openid_connect_provider_url = aws_iam_openid_connect_provider.oidc.url
+  aws_iam_openid_connect_provider_arn = aws_iam_openid_connect_provider.oidc.arn
   source = "./modules/iam"
 }
 
+# SG 
 module "aws-security-group" {
   source = "./modules/security-group"
   aws_cluster_name = var.aws_cluster_name
@@ -27,6 +32,7 @@ resource "aws_eks_cluster" "eks-cluster" {
   version = var.cluster_version
 
   enabled_cluster_log_types = var.cluster_log_types
+  
 
   vpc_config {
     security_group_ids = [module.aws-security-group.eks_controlplane_security_group_id] # cluster SG 설정
@@ -74,7 +80,7 @@ resource "aws_eks_node_group" "eks-node-group" {
     
 }
 
-
+# Bastion 
 resource "aws_instance" "bastion" {
   ami = data.aws_ami.distro.id
   instance_type = var.aws_bastion_size
@@ -89,17 +95,25 @@ resource "aws_instance" "bastion" {
   }))
 }
 
-## TODO: depend on 추가(첫번째 실행시 에러)
+# Addon
 module "eks-add-on" {
   source = "./modules/addon"
   aws_cluster_name = var.aws_cluster_name
   default_tags = var.default_tags
-  
+  vpc_cni_service_account_role_arn = module.aws-iam.eks_vpc_cni_iam_role_arn
+
   depends_on = [
-  aws_eks_node_group.eks-node-group,
+  # aws_eks_node_group.eks-node-group,
+  module.aws-iam.addon_iam_role_policy_attachment_dependencies
   ]
 }
 
+# OIDC
+resource "aws_iam_openid_connect_provider" "oidc" {
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = [data.tls_certificate.tls-certicate.certificates[0].sha1_fingerprint]
+  url = aws_eks_cluster.eks-cluster.identity[0].oidc[0].issuer
+}
 
 # module "helm-chart" {
 #   source = "./modules/helm"

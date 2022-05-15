@@ -1,5 +1,6 @@
 resource "helm_release" "nginx-ingress" {
 
+  count = var.ingress_values_path ? 1:0
   repository = "https://charts.bitnami.com/bitnami"
   chart = "nginx-ingress-controller"
   name = "nginx-ingress-controller"

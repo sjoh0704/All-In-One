@@ -54,13 +54,18 @@ resource "aws_iam_role_policy_attachment" "eks-node-AmazonEKSWorkerNodePolicy" {
   role       = aws_iam_role.eks-node.name
 }
 
-resource "aws_iam_role_policy_attachment" "eks-node-AmazonEKS_CNI_Policy" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role       = aws_iam_role.eks-node.name
-}
-
 resource "aws_iam_role_policy_attachment" "eks-node-AmazonEC2ContainerRegistryReadOnly" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
   role       = aws_iam_role.eks-node.name
 }
 
+# oidc - vpc cni role
+resource "aws_iam_role" "vpc-cni" {
+  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
+  name = "vpc-cni-role"
+}
+
+resource "aws_iam_role_policy_attachment" "vpc-cni-policy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  role       = aws_iam_role.vpc-cni.name
+}

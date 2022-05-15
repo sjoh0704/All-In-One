@@ -89,7 +89,7 @@ variable "aws_bastion_num" {
 
 variable "cluster_log_types" {
   type = list
-  default = ["api", "audit"]
+  default = []
 }
 
 variable "cluster_version" {
