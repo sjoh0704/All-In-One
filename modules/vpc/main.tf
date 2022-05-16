@@ -33,6 +33,7 @@ resource "aws_subnet" "subnet-public" {
   tags = merge(var.default_tags, tomap({
     Name = "${var.aws_cluster_name}-${element(var.aws_avail_zones, count.index)}-public"
     "kubernetes.io/cluster/${var.aws_cluster_name}" = "shared"
+    "kubernetes.io/role/elb" = 1
   }))
 }
 
@@ -51,6 +52,7 @@ resource "aws_subnet" "subnet-private" {
   tags = merge(var.default_tags, tomap({
     Name = "${var.aws_cluster_name}-${element(var.aws_avail_zones, count.index)}-private"
     "kubernetes.io/cluster/${var.aws_cluster_name}" = "shared"
+    "kubernetes.io/role/internal-elb" = 1
   }))
 }
 
