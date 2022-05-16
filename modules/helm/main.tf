@@ -23,7 +23,6 @@ resource "helm_release" "argo-cd" {
   ]
 }
 
-## todo: alb 생성 안됨
 # aws-lb-controller set up 
 resource "helm_release" "aws-lb-controller" {
   repository = "https://aws.github.io/eks-charts"
@@ -53,6 +52,19 @@ resource "kubernetes_service_account" "aws-lb-controller" {
   }
   automount_service_account_token = true
 }
+
+
+# # aws-cloudwatch-metrics set up # 클러스터 지표 수집 
+# resource "helm_release" "aws-cloudwatch-metrics" {
+#   repository = "https://aws.github.io/eks-charts"
+#   chart = "aws-cloudwatch-metrics"
+#   name = var.aws_cluster_name
+#   namespace = "amazon-cloudwatch"
+#   create_namespace = true
+#   # values = [
+#   #   "${file(var.aws_load_balancer_controller_values_path)}"
+#   # ]
+# }
 
 
 
