@@ -54,19 +54,31 @@ resource "kubernetes_service_account" "aws-lb-controller" {
 }
 
 
-# # aws-cloudwatch-metrics set up # 클러스터 지표 수집 
-# resource "helm_release" "aws-cloudwatch-metrics" {
-#   repository = "https://aws.github.io/eks-charts"
-#   chart = "aws-cloudwatch-metrics"
-#   name = var.aws_cluster_name
-#   namespace = "amazon-cloudwatch"
-#   create_namespace = true
-#   # values = [
-#   #   "${file(var.aws_load_balancer_controller_values_path)}"
-#   # ]
-# }
+# aws-cloudwatch-metrics set up # 클러스터 지표 수집 
+resource "helm_release" "aws-cloudwatch-metrics" {
+  repository = "https://aws.github.io/eks-charts"
+  chart = "aws-cloudwatch-metrics"
+  name = var.aws_cluster_name
+  namespace = "amazon-cloudwatch"
+  create_namespace = true
+  values = [
+    "${file(var.aws_cloudwatch_metrics_values_path)}"
+  ]
+}
 
-
+resource "kubernetes_service_account" "aws-cloudwatch-metrics" {
+  metadata {
+    name = "aws-cloudwatch-metrics"
+    namespace = "amazon-cloudwatch"
+    annotations = {
+      "eks.amazonaws.com/role-arn" = var.eks_aws_cloudwatch_metrics_iam_role_arn
+    }
+  }
+  automount_service_account_token = true
+  depends_on = [
+    helm_release.aws-cloudwatch-metrics
+  ]
+}
 
 # resource "helm_release" "msa-chart" {
 #   name       = "msa-chart"

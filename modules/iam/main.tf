@@ -61,7 +61,7 @@ resource "aws_iam_role_policy_attachment" "eks-node-AmazonEC2ContainerRegistryRe
 
 # oidc - vpc cni role
 resource "aws_iam_role" "vpc-cni" {
-  assume_role_policy = data.aws_iam_policy_document.aws_node_assume_role_policy.json
+  assume_role_policy = data.aws_iam_policy_document.aws-node-assume-role-policy.json
   name = "vpc-cni-role"
 }
 
@@ -72,7 +72,7 @@ resource "aws_iam_role_policy_attachment" "vpc-cni-policy" {
 
 # oidc - aws-load-balancer-controller role
 resource "aws_iam_role" "aws-load-balancer-controller" {
-  assume_role_policy = data.aws_iam_policy_document.alb_controller_assume_role_policy.json
+  assume_role_policy = data.aws_iam_policy_document.alb-controller-assume-role-policy.json
   name = "aws-load-balancer-controller-role"
 }
 
@@ -88,4 +88,13 @@ resource "aws_iam_policy" "aws-load-balancer-controller" {
   policy = "${file("${path.module}/policy/aws-load-balancer-controller-iam-policy.json")}"
 }
 
-# InvalidSubnetID.NotFound
+# oidc - aws-cloudwatch-metrics role
+resource "aws_iam_role" "aws-cloudwatch-metrics" {
+  assume_role_policy = data.aws_iam_policy_document.aws-cloudwatch-metrics-assume-role-policy.json
+  name = "aws-cloudwatch-metrics-role"
+}
+
+resource "aws_iam_role_policy_attachment" "aws-cloudwatch-metrics" {
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+  role       = aws_iam_role.aws-cloudwatch-metrics.name
+}

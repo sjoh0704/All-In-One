@@ -126,6 +126,11 @@ module "helm" {
   aws_load_balancer_controller_values_path = "./helm-values/aws-load-balancer-controller.yaml"
   eks_aws_load_balancer_controller_iam_role_arn = module.aws-iam.eks_aws_load_balancer_controller_iam_role_arn
   
+  # aws-cloudwatch-metrics controller
+  aws_cloudwatch_metrics_values_path = "./helm-values/aws-cloudwatch-metrics.yaml"
+  eks_aws_cloudwatch_metrics_iam_role_arn = module.aws-iam.eks_aws_cloudwatch_metrics_iam_role_arn
+  
+
   depends_on = [
   aws_eks_node_group.eks-node-group,
   ]

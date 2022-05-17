@@ -40,3 +40,9 @@ output addon_iam_role_policy_attachment_dependencies {
 output eks_aws_load_balancer_controller_iam_role_arn {
     value = aws_iam_role.aws-load-balancer-controller.arn
 }
+
+
+# oidc - aws-cloudwatch-metrics
+output eks_aws_cloudwatch_metrics_iam_role_arn {
+    value = aws_iam_role.aws-cloudwatch-metrics.arn
+}
