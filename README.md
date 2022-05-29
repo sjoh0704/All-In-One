@@ -53,14 +53,14 @@
 
 ## 배포할 애플리케이션 - MSA Shop
 
-|Service name| Role | 사용 DB | 
-|---|---|---|
-| [Front](https://github.com/sjoh0704/All-In-One-Front) | 사용자 UI | X |
-| [Cart](https://github.com/sjoh0704/All-In-One-Cart) | 상품을 담을 수 있는 카트 | MongoDB |
-| [User](https://github.com/sjoh0704/All-In-One-User) | 로그인/회원가입 및 사용자 정보관리 | MySQL |
-| [Product](https://github.com/sjoh0704/All-In-One-Product) | 상품 등록 및 관리 | MySQL |
-| [Rating](https://github.com/sjoh0704/All-In-One-Rating) | 사용자 평점 시스템 | MongoDB |
-| [Order](https://github.com/sjoh0704/All-In-One-Order) | 상품 주문 | MySQL |
+|Service name| Role | 사용 DB | Helm Chart | 
+|---|---|---|---|
+| [Front](https://github.com/sjoh0704/All-In-One-Front) | 사용자 UI | X | [front](https://github.com/sjoh0704/All-In-One/tree/master/chart/front) |
+| [Cart](https://github.com/sjoh0704/All-In-One-Cart) | 상품을 담을 수 있는 카트 | MongoDB | [cart](https://github.com/sjoh0704/All-In-One/tree/master/chart/cart) |
+| [User](https://github.com/sjoh0704/All-In-One-User) | 로그인/회원가입 및 사용자 정보관리 | MySQL | [user](https://github.com/sjoh0704/All-In-One/tree/master/chart/user) |
+| [Product](https://github.com/sjoh0704/All-In-One-Product) | 상품 등록 및 관리 | MySQL | [product](https://github.com/sjoh0704/All-In-One/tree/master/chart/product) |
+| [Rating](https://github.com/sjoh0704/All-In-One-Rating) | 사용자 평점 시스템 | MongoDB | [rating](https://github.com/sjoh0704/All-In-One/tree/master/chart/rating) |
+| [Order](https://github.com/sjoh0704/All-In-One-Order) | 상품 주문 | MySQL | [order](https://github.com/sjoh0704/All-In-One/tree/master/chart/order) |
 
 <br/>
 
