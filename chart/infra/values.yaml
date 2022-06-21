@@ -2,12 +2,33 @@ application:
   source:
     repoURL: https://github.com/sjoh0704/All-In-One.git
     targetRevision: HEAD
-
   syncPolicy:
     automated:
       prune: false
       selfHeal: false
       allowEmpty: false
+
+
+awsCloudwatchMetrics:
+  source:
+    repoURL: https://github.com/sjoh0704/All-In-One.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+
+awsLoadBalancerController:
+  source:
+    repoURL: https://github.com/sjoh0704/All-In-One.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+
 
 
 apigateway:

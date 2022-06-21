@@ -23,4 +23,6 @@ tfenv use [version]
 < helm >
 helm dep up .
 
-
+<helm 차트 다운하기>
+helm repo add eks https://aws.github.io/eks-charts
+helm pull eks/aws-load-balancer-controller --untar

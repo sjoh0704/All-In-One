@@ -3,7 +3,7 @@ image:
   repository: amazon/cloudwatch-agent
   tag: 1.247350.0b251780
   pullPolicy: IfNotPresent
-
+##TODO
 clusterName: my-eks-test
 
 resources:

@@ -14,6 +14,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 # The name of the Kubernetes cluster. A non-empty value is required
+##TODO
 clusterName: my-eks-test
 
 serviceAccount:

@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: aws-load-balancer-controller
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  namespace: argo-cd
+spec:
+  project: default
+  source:
+    repoURL: {{ .Values.awsLoadBalancerController.source.repoURL }}
+    targetRevision: {{ .Values.awsLoadBalancerController.source.targetRevision }}
+    path: chart/aws-load-balancer-controller
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      prune: {{ .Values.awsLoadBalancerController.syncPolicy.automated.prune }}
+      selfHeal: {{ .Values.awsLoadBalancerController.syncPolicy.automated.selfHeal }}
+      allowEmpty: {{ .Values.awsLoadBalancerController.syncPolicy.automated.allowEmpty }}

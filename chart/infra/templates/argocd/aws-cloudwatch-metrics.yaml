@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: aws-cloudwatch-metrics
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  namespace: argo
+spec:
+  project: default
+  source:
+    repoURL: {{ .Values.awsCloudwatchMetrics.source.repoURL }}
+    targetRevision: {{ .Values.awsCloudwatchMetrics.source.targetRevision }}
+    path: chart/aws-cloudwatch-metrics
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: amazon-cloudwatch
+  syncPolicy:
+    automated:
+      prune: {{ .Values.awsCloudwatchMetrics.syncPolicy.automated.prune }}
+      selfHeal: {{ .Values.awsCloudwatchMetrics.syncPolicy.automated.selfHeal }}
+      allowEmpty: {{ .Values.awsCloudwatchMetrics.syncPolicy.automated.allowEmpty }}
+
