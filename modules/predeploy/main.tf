@@ -40,16 +40,14 @@ resource "helm_release" "infra" {
 # infra chart가 선배포되어 있어야 함
 resource "helm_release" "msa-shop" {
   chart      = "${abspath(path.root)}/chart/msa-shop"
-  name = "infra"
+  name = "msa"
   namespace = "argo"
   create_namespace = false
     depends_on = [
   helm_release.argo-cd,
   helm_release.infra
   ]
-  
 }
-
 
 # aws-lb-controller service account 
 # 필요한 iam role을 갖는 SA를 미리 배포 

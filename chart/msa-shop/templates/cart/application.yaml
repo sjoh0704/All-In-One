@@ -2,8 +2,6 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
     name: {{ .Release.Name }}-cart
-    finalizers:
-        - resources-finalizer.argocd.argoproj.io
     namespace: argo
 spec:
     project: default
