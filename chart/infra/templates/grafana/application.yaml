@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  namespace: argo-cd
+spec:
+  project: default
+  source:
+    repoURL: {{ .Values.grafana.source.repoURL }}
+    targetRevision: {{ .Values.grafana.source.targetRevision }}
+    path: chart/grafana
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      prune: {{ .Values.grafana.syncPolicy.automated.prune }}
+      selfHeal: {{ .Values.grafana.syncPolicy.automated.selfHeal }}
+      allowEmpty: {{ .Values.grafana.syncPolicy.automated.allowEmpty }}

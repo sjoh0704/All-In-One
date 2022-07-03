@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+    name: {{ .Release.Name }}-product
+    finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    namespace: argo
+spec:
+    project: default
+    source:
+        repoURL: {{ .Values.product.source.repoURL }}
+        targetRevision: {{ .Values.product.source.targetRevision }}
+        path: chart/product
+    destination:
+        server: https://kubernetes.default.svc
+        namespace: {{ .Release.Namespace }}
+    syncPolicy:
+        automated:
+            prune: {{ .Values.product.syncPolicy.automated.prune }}
+            selfHeal: {{ .Values.product.syncPolicy.automated.selfHeal }}
+            allowEmpty: {{ .Values.product.syncPolicy.automated.allowEmpty }}

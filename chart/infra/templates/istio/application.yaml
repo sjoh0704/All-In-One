@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istio
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  namespace: argo-cd
+spec:
+  project: default
+  source:
+    repoURL: {{ .Values.istio.source.repoURL }}
+    targetRevision: {{ .Values.istio.source.targetRevision }}
+    path: chart/istio
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      prune: {{ .Values.istio.syncPolicy.automated.prune }}
+      selfHeal: {{ .Values.istio.syncPolicy.automated.selfHeal }}
+      allowEmpty: {{ .Values.istio.syncPolicy.automated.allowEmpty }}

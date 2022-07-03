@@ -25,7 +25,7 @@ module "aws-security-group" {
   workstation-external-cidr= "${chomp(data.http.workstation-external-ip.body)}/32"
 }
 
-# EKS cluster 
+# EKS controlplane
 resource "aws_eks_cluster" "eks-cluster" {
   name = var.aws_cluster_name
   role_arn = module.aws-iam.eks_cluster_iam_role_arn
@@ -33,7 +33,6 @@ resource "aws_eks_cluster" "eks-cluster" {
 
   enabled_cluster_log_types = var.cluster_log_types
   
-
   vpc_config {
     security_group_ids = [module.aws-security-group.eks_controlplane_security_group_id] # cluster SG 설정
     subnet_ids = concat(module.aws-vpc.aws_subnet_ids_public, module.aws-vpc.aws_subnet_ids_private) ## public에도 있어야 public outbound LB 생성 가능 
@@ -118,7 +117,6 @@ resource "aws_iam_openid_connect_provider" "oidc" {
 module "predeploy" {
   source = "./modules/predeploy"
   aws_cluster_name = var.aws_cluster_name
-
   
   # alb controller
   eks_aws_load_balancer_controller_iam_role_arn = module.aws-iam.eks_aws_load_balancer_controller_iam_role_arn
@@ -126,7 +124,6 @@ module "predeploy" {
   # aws-cloudwatch-metrics controller
   eks_aws_cloudwatch_metrics_iam_role_arn = module.aws-iam.eks_aws_cloudwatch_metrics_iam_role_arn
   
-
   depends_on = [
   aws_eks_node_group.eks-node-group,
   ]

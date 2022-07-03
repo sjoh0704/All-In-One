@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+    name: {{ .Release.Name }}-cart
+    finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    namespace: argo
+spec:
+    project: default
+    source:
+        repoURL: {{ .Values.cart.source.repoURL }}
+        targetRevision: {{ .Values.cart.source.targetRevision }}
+        path: chart/cart
+    destination:
+        server: https://kubernetes.default.svc
+        namespace: {{ .Release.Namespace }}
+    syncPolicy:
+        automated:
+            prune: {{ .Values.cart.syncPolicy.automated.prune }}
+            selfHeal: {{ .Values.cart.syncPolicy.automated.selfHeal }}
+            allowEmpty: {{ .Values.cart.syncPolicy.automated.allowEmpty }}

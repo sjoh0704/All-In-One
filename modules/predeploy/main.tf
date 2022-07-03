@@ -1,16 +1,54 @@
 # argo-cd set up
+# Argocd는 선배포 
 resource "helm_release" "argo-cd" {
-  repository = "https://argoproj.github.io/argo-helm"
-  chart = "argo-cd"
-  name = "argo-cd"
-  namespace = "argo-cd"
+  chart      = "${abspath(path.root)}/chart/argo-cd"
+  name = "argo"
+  namespace = "argo"
   create_namespace = true
-  values = [
-    "${file("./modules/predeploy/values.yaml")}"
+  
+  // helm values file의 clusterName 변경이 필요한 경우  
+  provisioner "local-exec" {
+    command = "sed -i 's/^clusterName:.*$/clusterName: ${var.aws_cluster_name}/g' $CLOUD_WATCH_PATH;"
+
+    environment = {
+      CLOUD_WATCH_PATH = "${abspath(path.root)}/chart/aws-cloudwatch-metrics/values.yaml"
+    }
+  }
+
+  provisioner "local-exec" {
+    command = "sed -i 's/^clusterName:.*$/clusterName: ${var.aws_cluster_name}/g' $AWS_LB_CTR_PATH;"
+
+    environment = {
+      AWS_LB_CTR_PATH = "${abspath(path.root)}/chart/aws-load-balancer-controller/values.yaml"
+    }
+  }
+}
+
+# infra chart aplication 배포
+resource "helm_release" "infra" {
+  chart      = "${abspath(path.root)}/chart/infra"
+  name = "infra"
+  namespace = "argo"
+  create_namespace = false
+    depends_on = [
+  helm_release.argo-cd
   ]
 }
 
+# msa chart aplication 배포
+resource "helm_release" "msa-shop" {
+  chart      = "${abspath(path.root)}/chart/msa-shop"
+  name = "infra"
+  namespace = "argo"
+  create_namespace = false
+    depends_on = [
+  helm_release.argo-cd
+  ]
+}
+
+
 # aws-lb-controller service account 
+# 필요한 iam role을 갖는 SA를 미리 배포 
 resource "kubernetes_service_account" "aws-lb-controller" {
   metadata {
     name = "aws-load-balancer-controller"
@@ -26,7 +64,14 @@ resource "kubernetes_service_account" "aws-lb-controller" {
   automount_service_account_token = true
 }
 
-# amazon cloud watch service account 
+# amazon cloud watch service account
+# 필요한 IAM Role을 갖는 SA를 미리 배포 
+resource "kubernetes_namespace" "aws-cloudwatch-metrics" {
+  metadata {
+    name = "amazon-cloudwatch"
+  }
+}
+
 resource "kubernetes_service_account" "aws-cloudwatch-metrics" {
   metadata {
     name = "aws-cloudwatch-metrics"
@@ -36,7 +81,12 @@ resource "kubernetes_service_account" "aws-cloudwatch-metrics" {
     }
   }
   automount_service_account_token = true
+  depends_on = [
+  kubernetes_namespace.aws-cloudwatch-metrics
+  ]
 }
+
+
 
 # aws-lb-controller set up 
 # resource "helm_release" "aws-lb-controller" {

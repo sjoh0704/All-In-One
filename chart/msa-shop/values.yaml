@@ -1,34 +1,4 @@
-awsCloudwatchMetrics:
-  source:
-    repoURL: https://github.com/sjoh0704/All-In-One.git
-    targetRevision: HEAD
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-      allowEmpty: true
-
-awsLoadBalancerController:
-  source:
-    repoURL: https://github.com/sjoh0704/All-In-One.git
-    targetRevision: HEAD
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-      allowEmpty: true
-
-grafana:
-  source:
-    repoURL: https://github.com/sjoh0704/All-In-One.git
-    targetRevision: HEAD
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-      allowEmpty: true
-
-istio:
+front:
   source:
     repoURL: https://github.com/sjoh0704/All-In-One.git
     targetRevision: HEAD
@@ -38,13 +8,57 @@ istio:
       selfHeal: false
       allowEmpty: false
 
-prometheus:
+cart:
   source:
     repoURL: https://github.com/sjoh0704/All-In-One.git
     targetRevision: HEAD
   syncPolicy:
     automated:
-      prune: true
-      selfHeal: true
-      allowEmpty: true
+      prune: false
+      selfHeal: false
+      allowEmpty: false
+
+user:
+  source:
+    repoURL: https://github.com/sjoh0704/All-In-One.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: false
+      allowEmpty: false
+
+product:
+  source:
+    repoURL: https://github.com/sjoh0704/All-In-One.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: false
+      allowEmpty: false
+
+order:
+  source:
+    repoURL: https://github.com/sjoh0704/All-In-One.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: false
+      allowEmpty: false
+
+rating:
+  source:
+    repoURL: https://github.com/sjoh0704/All-In-One.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: false
+      allowEmpty: false
+
+apigateway:
+  replicas: 1
+
 
