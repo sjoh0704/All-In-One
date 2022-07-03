@@ -1,3 +1,4 @@
+# 
 # argo-cd set up
 # Argocd는 선배포 
 resource "helm_release" "argo-cd" {
@@ -35,15 +36,18 @@ resource "helm_release" "infra" {
   ]
 }
 
-# msa chart aplication 배포
+# msa chart aplication 배포 
+# infra chart가 선배포되어 있어야 함
 resource "helm_release" "msa-shop" {
   chart      = "${abspath(path.root)}/chart/msa-shop"
   name = "infra"
   namespace = "argo"
   create_namespace = false
     depends_on = [
-  helm_release.argo-cd
+  helm_release.argo-cd,
+  helm_release.infra
   ]
+  
 }
 
 
